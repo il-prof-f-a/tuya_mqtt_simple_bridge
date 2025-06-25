@@ -1,0 +1,6 @@
+# runtime
+tinytuya==1.17.2
+paho-mqtt>=1.6
+
+# opzionale, se vuoi log colorati in Windows
+colorama>=0.4

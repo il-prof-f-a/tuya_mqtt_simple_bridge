@@ -1,5 +1,13 @@
-# Byte-compiled / optimized / DLL files
+# venv & Python cache
+venv/
 __pycache__/
+*.pyc
+
+# credenziali locali, config utente
+*.secret
+devices.json
+
+# Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
 
