@@ -1,3 +1,4 @@
+
 # 🏠 Tuya MQTT Bridge
 
 Bridge leggero *local only* che:
@@ -40,6 +41,19 @@ pip install -r requirements.txt
 ```
 
 ## 🔧 Configurazione
+Modificare nell'intestazione dello script i parametri di connessione al server MQTT:
+
+    # === CONFIG =============================================================
+    DEVICES_FILE       = Path("devices.json")
+    MQTT_BROKER        = "192.168.0.1"
+    MQTT_PORT          = 1883
+    MQTT_BASE_TOPIC    = "tuya"
+    
+    POLL_INTERVAL_SEC  = 1
+    FORCE_REFRESH_SEC  = 60
+    LOG_LEVEL          = logging.INFO
+    TINYTUYA_DEBUG     = False
+    # ========================================================================
 
 ### Recupero **ID**, **LocalKey** e file **devices.json**
 
@@ -49,7 +63,7 @@ Segui l’ottima guida ufficiale di TinyTuya:
 ▶️ **Setup Wizard – Getting Local Keys**  
 <https://github.com/jasonacox/tinytuya#setup-wizard---getting-local-keys>
 
-Il wizard genera automaticamente (o ti fornisce i dati per compilare) il file `devices.json`.
+Il wizard genera automaticamente (o ti fornisce i dati per compilare) il file `devices.json` **che dovrà essere aggiunto alla root dello script**.
 
 ---
 
