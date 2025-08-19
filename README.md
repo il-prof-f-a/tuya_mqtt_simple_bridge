@@ -1,4 +1,5 @@
 
+
 # 🏠 Tuya MQTT Bridge
 
 Bridge leggero *local only* che:
@@ -137,3 +138,7 @@ e la tapparella si muoverà.
 ### -Pulsante Per Tapparella (Wi-Fi BLE)
 IXTRIMA Pulsante saliscendi tapparella connesso Smart Wifi Tuya frutto modulo compatibile con supporti Vimar plana bianco
 https://www.amazon.it/dp/B0F48V6RXJ?ref=ppx_yo2ov_dt_b_fed_asin_title
+ 
+### -Doppio interruttore per tapparelle (Wi-Fi + 433Mhz)
+Jane Eyre Modulo Relè Wireless WiFi Interruttore Remoto a 2 Canali, Relè Momentaneo/Autobloccante, Interblocco per APP Tuya/Smart Life con Telecomando RF 433MHz Compatibile con Alexa e Google Home
+https://www.amazon.it/Jane-Eyre-Interruttore-Autobloccante-Interblocco/dp/B09STY1S2G/
