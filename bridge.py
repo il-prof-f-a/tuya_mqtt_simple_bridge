@@ -81,16 +81,57 @@ def on_connect(cl, *_):
 
 def on_message(cl, userdata, msg):
     log.info(f"[RAW] {msg.topic} -> {msg.payload.decode(errors='replace')}")
-    slug = msg.topic.split("/")[1]
+    parts = msg.topic.split("/")
+    if len(parts) < 3:
+        log.warning(f"Topic non valido: {msg.topic}")
+        return
+
+    base, slug = parts[0], parts[1]
     dev_id = slug_to_id.get(slug)
     if not dev_id:
         log.warning(f"Slug sconosciuto {slug}")
         return
-    try:
-        dps_map = json.loads(clean_payload(msg.payload))
-        dps_map = {int(k): v for k, v in dps_map.items()}
-    except Exception as e:
-        log.error(f"JSON non valido su {msg.topic}: {e}")
+
+    # Caso 1: topic base (JSON classico)
+    if parts[2] == "set" and len(parts) == 3:
+        try:
+            dps_map = json.loads(clean_payload(msg.payload))
+            dps_map = {int(k): v for k, v in dps_map.items()}
+        except Exception as e:
+            log.error(f"JSON non valido su {msg.topic}: {e}")
+            return
+
+    # Caso 2: topic “path” (es. set/1/value/limit)
+    elif parts[2] == "set":
+        try:
+            # costruiamo il percorso
+            path = parts[3:]  # es. ["1", "value", "limit"]
+            val_raw = msg.payload.decode(errors="replace").strip()
+            try:
+                value = json.loads(val_raw)
+            except json.JSONDecodeError:
+                # se non è JSON, trattiamolo come stringa o numero
+                if re.match(r"^-?\d+(\.\d+)?$", val_raw):
+                    value = float(val_raw) if "." in val_raw else int(val_raw)
+                elif val_raw.lower() in ("true", "false"):
+                    value = val_raw.lower() == "true"
+                else:
+                    value = val_raw
+
+            # costruzione annidata dinamica
+            def nest_path(keys, val):
+                if not keys:
+                    return val
+                k = keys[0]
+                return {k: nest_path(keys[1:], val)}
+
+            dps_map = {int(path[0]): nest_path(path[1:], value)}
+
+        except Exception as e:
+            log.error(f"Errore parsing path-topic {msg.topic}: {e}")
+            return
+    else:
+        log.warning(f"Topic non gestito: {msg.topic}")
         return
 
     log.info(f"[CMD] {slug} <- {dps_map}")
@@ -99,7 +140,7 @@ def on_message(cl, userdata, msg):
     try:
         if hasattr(dev, "set_dps_multiple"):
             result = dev.set_dps_multiple(dps_map, nowait=False)
-        else:                           # fallback one-by-one
+        else:  # fallback one-by-one
             result = {d: dev.set_value(d, v, nowait=False) for d, v in dps_map.items()}
         log.info(f"[ACK] {slug} -> {result}")
     except Exception as e:
